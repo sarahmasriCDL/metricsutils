@@ -52,16 +52,42 @@ parse_amount <- function(x) {
   x <- tolower(trimws(as.character(x)))
   x <- stringr::str_replace_all(x, ",", "")
   
-  multiplier <- dplyr::case_when(
-    stringr::str_detect(x, "million|\\bm\\b|[0-9]m\\b") ~ 1e6,
-    stringr::str_detect(x, "thousand|\\bk\\b|[0-9]k\\b") ~ 1e3,
-    TRUE ~ 1
-  )
+  detect_multiplier <- function(z) {
+    dplyr::case_when(
+      stringr::str_detect(z, "million|\\bm\\b|[0-9]m\\b") ~ 1e6,
+      stringr::str_detect(z, "thousand|\\bk\\b|[0-9]k\\b") ~ 1e3,
+      TRUE ~ 1
+    )
+  }
   
-  num <- stringr::str_extract(x, "[0-9]+\\.?[0-9]*")
-  num <- as.numeric(num)
+  parse_single <- function(x_single, default_multiplier = 1) {
+    multiplier <- detect_multiplier(x_single)
+    
+    if (multiplier == 1) {
+      multiplier <- default_multiplier
+    }
+    
+    num <- stringr::str_extract(x_single, "[0-9]+\\.?[0-9]*")
+    as.numeric(num) * multiplier
+  }
   
-  num * multiplier
+  purrr::map_dbl(x, function(val) {
+    if (is.na(val) || stringr::str_trim(val) == "") {
+      return(NA_real_)
+    }
+    
+    is_range <- stringr::str_detect(val, "[0-9].*-[^\\(]*[0-9]")
+    
+    if (is_range) {
+      default_multiplier <- detect_multiplier(val)
+      parts <- unlist(stringr::str_split(val, "-"))
+      parts <- stringr::str_trim(parts)
+      nums <- purrr::map_dbl(parts, parse_single, default_multiplier = default_multiplier)
+      return(mean(nums, na.rm = TRUE))
+    }
+    
+    parse_single(val)
+  })
 }
 
 
@@ -188,6 +214,18 @@ clean_money <- function(x, currency = NULL, to = "CAD",
       
       curr <- dplyr::coalesce(
         detect_currency(text_to_parse),
+        toupper(as.character(fallback_currency)),
+        "CAD"
+      )
+      
+      return(amount * unname(rates[curr]) / unname(rates[to]))
+    }
+    
+    if (stringr::str_detect(value, "[0-9][^,]*-[^,]*[0-9]")) {
+      amount <- parse_amount(value)
+      
+      curr <- dplyr::coalesce(
+        detect_currency(value),
         toupper(as.character(fallback_currency)),
         "CAD"
       )
