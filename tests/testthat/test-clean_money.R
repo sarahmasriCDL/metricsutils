@@ -60,3 +60,13 @@ test_that("clean_money uses fallback currency column", {
   result <- clean_money(x, currency = currency, rates = c(CAD = 1, USD = 1.37))
   expect_equal(result, 250000 * 1.37)
 })
+
+
+test_that("parse_amount handles ranges", {
+  x <- c("10k - 20k", "1M-2M", "5 - 10")
+  result <- parse_amount(x)
+  
+  expect_equal(result[1], 15000)
+  expect_equal(result[2], 1500000)
+  expect_equal(result[3], 7.5)
+})
