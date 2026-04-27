@@ -1,11 +1,10 @@
 Package: metricsutils
-Title: What the Package Does (One Line, Title Case)
+Title: Utilities For Cleaning, Transforming, And Analyzing Venture Data
 Version: 0.0.0.9000
 Authors@R: 
-    person("First", "Last", , "first.last@example.com", role = c("aut", "cre"))
-Description: What the package does (one paragraph).
-License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
-    license
+    person("Sarah", "Masri", , "sarah.masri@creativedestructionlab.com", role = c("aut", "cre"))
+Description: This package provides a set of utilities for cleaning, transforming, and analyzing structured data, with a focus on standardizing inconsistent inputs, parsing complex fields, and generating reliable, analysis-ready datasets. It includes tools for handling messy text, extracting and formatting numeric and financial values, reshaping data, and creating summary metrics, enabling efficient and reproducible data workflows.
+License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.3
