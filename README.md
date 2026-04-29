@@ -12,4 +12,4 @@ You can install the development version from GitHub:
 
 ```r
 # install.packages("devtools")
-devtools::install_github("yourusername/metricsutils")
+devtools::install_github("sarahmasriCDL/metricsutils")
