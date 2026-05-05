@@ -10,20 +10,24 @@ tag_venture_description(description)
 \item{description}{A character string containing the venture description.}
 }
 \value{
-A named list with three elements:
-\describe{
-\item{tech}{Character vector of detected technology tags.}
-\item{product}{Character vector of detected product-type tags.}
-\item{industry}{Character vector of detected industry tags.}
-}
+A named list with one element per matched stream (e.g. \code{Climate},
+\code{Compute}, \code{BME}, \code{Minerals}, \code{Defence}). Each element is
+a character vector of matched subcategory labels within that stream.
+Streams with no matches are omitted from the result.
 }
 \description{
-Parses a venture description and assigns relevant tags across three dimensions:
-technology, product type, and industry. Tags are identified using keyword-based
-matching against a predefined dictionary with synonym expansion.
+Parses a venture description and assigns relevant tags across CDL stream
+theses and their subcategories. Tags are identified using keyword-based
+matching against a predefined dictionary covering Climate, Compute, BME,
+Minerals, and Defence streams.
 }
 \details{
 This function uses rule-based NLP through dictionary and synonym matching.
-Tags are assigned if any keyword or synonym associated with a tag is found
-in the venture description.
+A subcategory tag is assigned if any keyword associated with it is found
+as a whole word in the venture description (case-insensitive).
+}
+\examples{
+tag_venture_description("We develop satellite-based earth observation tools
+  for environmental monitoring using edge AI processors.")
+
 }
